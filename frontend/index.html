@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAgenda • Pet Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <a href="#" class="brand" onclick="showScreen('schedule'); return false;">
+            <span class="brand-icon">🐾</span>
+            <span>
+                <strong>PetAgenda</strong>
+                <small>Pet Shop</small>
+            </span>
+        </a>
+
+        <nav class="nav-actions">
+            <button id="nav-schedule" class="nav-btn active" onclick="showScreen('schedule')">Marcar agendamento</button>
+            <button id="nav-list" class="nav-btn" onclick="showScreen('list')">Meus agendamentos</button>
+        </nav>
+    </header>
+
+    <main class="page-shell">
+        <!-- TELA 1: NOVO AGENDAMENTO -->
+        <section id="screen-schedule" class="screen active">
+            <div class="hero-copy">
+                <span class="eyebrow">AGENDA DO PET SHOP</span>
+                <h1>Um horário especial<br>para o seu pet.</h1>
+                <p>Cadastre cachorro ou gato, escolha o serviço, marque dia e hora e deixe as observações necessárias.</p>
+            </div>
+
+            <div class="form-card">
+                <div class="form-heading">
+                    <div>
+                        <span class="step-label">NOVO HORÁRIO</span>
+                        <h2 id="form-title">Marcar agendamento</h2>
+                    </div>
+                    <span class="form-icon">📅</span>
+                </div>
+
+                <form id="appointment-form" onsubmit="saveAppointment(event)">
+                    <input type="hidden" id="appointment-id">
+
+                    <div class="form-grid two-cols">
+                        <div class="field">
+                            <label for="nome_pet">Nome do pet *</label>
+                            <input id="nome_pet" type="text" placeholder="Ex.: Thor" required maxlength="100">
+                        </div>
+                        <div class="field">
+                            <label for="nome_tutor">Nome do tutor *</label>
+                            <input id="nome_tutor" type="text" placeholder="Seu nome" required maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Seu pet é... *</label>
+                        <div class="pet-options">
+                            <label class="pet-option">
+                                <input type="radio" name="especie" value="Cachorro" checked>
+                                <span><b>🐶</b><strong>Cachorro</strong></span>
+                            </label>
+                            <label class="pet-option">
+                                <input type="radio" name="especie" value="Gato">
+                                <span><b>🐱</b><strong>Gato</strong></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-grid two-cols">
+                        <div class="field">
+                            <label for="servico">Serviço *</label>
+                            <select id="servico" required>
+                                <option value="">Selecione</option>
+                                <option>Banho</option>
+                                <option>Banho e tosa</option>
+                                <option>Tosa</option>
+                                <option>Corte de unhas</option>
+                                <option>Hidratação</option>
+                                <option>Consulta</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="data_hora">Dia e hora *</label>
+                            <input id="data_hora" type="text" placeholder="Selecione data e horário" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="observacao">Observações</label>
+                        <textarea id="observacao" rows="4" maxlength="500" placeholder="Ex.: Pet sensível a barulho, alergia a determinado produto..."></textarea>
+                        <span class="char-counter"><span id="obs-count">0</span>/500</span>
+                    </div>
+
+                    <div id="form-message" class="message hidden"></div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancel-edit" class="btn secondary hidden" onclick="cancelEdit()">Cancelar edição</button>
+                        <button type="submit" class="btn primary">
+                            <span id="submit-text">Confirmar agendamento</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TELA 2: LISTAGEM / CRUD -->
+        <section id="screen-list" class="screen">
+            <div class="list-heading">
+                <div>
+                    <span class="eyebrow">ORGANIZAÇÃO</span>
+                    <h1>Meus agendamentos</h1>
+                    <p>Consulte, filtre, edite ou exclua os horários cadastrados.</p>
+                </div>
+                <button class="btn primary compact" onclick="newAppointment()">＋ Novo agendamento</button>
+            </div>
+
+            <div class="filters-card">
+                <div class="field search-field">
+                    <label for="search">Buscar</label>
+                    <input id="search" type="text" placeholder="Pet, tutor, serviço ou observação..." oninput="loadAppointments()">
+                </div>
+                <div class="field">
+                    <label for="species-filter">Pet</label>
+                    <select id="species-filter" onchange="loadAppointments()">
+                        <option value="">Todos</option>
+                        <option value="Cachorro">Cachorros</option>
+                        <option value="Gato">Gatos</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="date-filter">Data</label>
+                    <input id="date-filter" type="date" onchange="loadAppointments()">
+                </div>
+                <button class="clear-filter" onclick="clearFilters()">Limpar filtros</button>
+            </div>
+
+            <div class="summary-row">
+                <strong id="appointment-count">0 agendamentos</strong>
+                <span>Ordenados por data e hora</span>
+            </div>
+
+            <div id="appointments-container" class="appointments-grid">
+                <div class="loading">Carregando agendamentos...</div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
