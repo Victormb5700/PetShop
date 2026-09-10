@@ -4,7 +4,7 @@ Sistema web para gerenciamento de agendamentos de um Pet Shop.
 
 O projeto permite cadastrar, visualizar, editar e excluir agendamentos de pets, além de pesquisar e filtrar os atendimentos.
 
-## 📌 Funcionalidades
+##  Funcionalidades
 
 * Cadastrar agendamentos
 * Visualizar agendamentos
@@ -25,19 +25,6 @@ O projeto permite cadastrar, visualizar, editar e excluir agendamentos de pets, 
 * Node.js
 * Express
 * MySQL
-* Flatpickr
-
-## 📁 Estrutura do projeto
-
-```text
-PetShop/
-├── backend/
-├── frontend/
-├── public/
-├── sql/
-├── package.json
-└── README.md
-```
 
 ## 💾 Banco de dados
 
